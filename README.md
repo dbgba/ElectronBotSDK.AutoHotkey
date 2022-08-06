@@ -19,8 +19,7 @@
 
 调用Accessible(无障碍)获取指定联系人的信息做为控制信号，即可实现比如：收到ElectronBot姿势参数后，调用SDK完成动作。
 
-![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey
-@master/1.%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E6%9D%A5%E6%8E%A7%E5%88%B6ElectronBot/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg)
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/1.%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E6%9D%A5%E6%8E%A7%E5%88%B6ElectronBot/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg)
 
 
 **2.智能家居控制**
