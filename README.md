@@ -36,7 +36,7 @@
 
 　
 
-**4.多个ElectronBot远程Tcp网络互动**
+**4.多个ElectronBot远程Tcp网络互动，手机网页控制ElectronBot**
 
 此示例是简单的验证了一下AHK通过公网IP或者局域网远程同步两台ElectronBot的互动反应。也可以使用我另一个项目进行网页控制，用浏览器来操作ElectronBot的话，就能实现手机或电脑的远程控制。
 
