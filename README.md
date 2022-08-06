@@ -26,7 +26,7 @@
 
 此示例选了一个简单易完成的方法硬改来实现电脑控制智能家居。示例用的继电器是CH340驱动，而AHK就能直接与CH340设备通信来进行控制。
 
-[3.将引出的线接到继电器.jpg]
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/2.%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85%E6%8E%A7%E5%88%B6/3.%E5%B0%86%E5%BC%95%E5%87%BA%E7%9A%84%E7%BA%BF%E6%8E%A5%E5%88%B0%E7%BB%A7%E7%94%B5%E5%99%A8.jpg)
 
 　
 
@@ -46,7 +46,8 @@
 
 此示例需要与我另一个手势识别项目配合来实现，示例预设演示同步动作有：双手放下时、单手举起握拳时、单手举起做剪刀手时、双手举起握拳时。摄像头识别到上述手势后，ElectronBot也会同步反应。当双手举起握拳时，会执行一套预设的长动作。
 
-[推荐手势设置.jpg]
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/5.%E6%91%84%E5%83%8F%E5%A4%B4%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB%E4%B8%8EElectronBot%E5%90%8C%E6%AD%A5/%E6%8E%A8%E8%8D%90%E6%89%8B%E5%8A%BF%E8%AE%BE%E7%BD%AE.jpg)
+
 
 　
 
