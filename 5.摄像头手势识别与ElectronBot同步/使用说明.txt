@@ -1,0 +1,4 @@
+此示例需要我另一个手势识别项目来实现
+https://github.com/dbgba/VisualGestureRecognition
+
+将 "MyAHKScript" 和 "ElectronBotSDK.ahk" 以及 "ElectronBotSDK" 文件夹覆盖替换 "VisualGestureRecognition-master" 的文件，再重新启动VisualGestureRecognition并开启手势识别即可使用。手势识别设置建议参考截图 "推荐手势设置.jpg" 设置。
