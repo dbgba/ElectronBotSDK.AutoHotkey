@@ -19,9 +19,8 @@
 
 调用Accessible(无障碍)获取指定联系人的信息做为控制信号，即可实现比如：收到ElectronBot姿势参数后，调用SDK完成动作。
 
-![](https://gcore.jsdelivr.net/gh/dbgba/Projectimages@master/VisualGestureRecognition/%E4%B8%8B%E8%BD%BD%E4%BE%9D%E8%B5%96%E5%8C%85.jpg)
-　
-[演示截图.png]
+![](https://gcore.jsdelivr.net/gh/dbgba/Projectimages@master/ElectronBotSDK.AutoHotkey
+/1.%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E6%9D%A5%E6%8E%A7%E5%88%B6ElectronBot/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg)
 
 
 **2.智能家居控制**
@@ -70,7 +69,7 @@ ElectronBot在每次接入USB时都会以默认花屏显示，此辅助示例通
 
 　
 
-**如果有更多想法和玩法扩展可以加入这个上位机交流群：924558003，我也在群里可以一起讨论。**
+**如果有更多想法和玩法扩展可以加入这个上位机交流群：924558003，我也在这个群里，可以一起讨论。**
 
 　
 
