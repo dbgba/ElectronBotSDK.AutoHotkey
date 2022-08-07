@@ -4,7 +4,7 @@ SetWorkingDir %A_ScriptDir%
 姿势 := New LowLevelSDK()
 表情 := New PlayerSDK()
 
-Global LLSDKFilePath := "test.jpg"  ; 让所有同步姿势都使用这个表情
+Global LLSDKFilePath := "test.jpg"  ; 用全局变量，让所有同步姿势都使用这个表情
 
 姿势.同步姿势(15, 30, 30, 180, 30, 180)
 Sleep 200
@@ -18,7 +18,7 @@ Sleep 200
 
 Loop 2 {  ; 招手2次
     Sleep 130
-    姿势.同步姿势(15, 0, 0, 180, 0, 0)
+    姿势.同步姿势(15, 0, 10, 180, 0, 0)
     Sleep 130
     姿势.同步姿势(15, 0, 30, 180, 0, 0)
 }
@@ -69,9 +69,9 @@ Loop 2 {  ;  高举双手左右晃动展示
 Sleep 200
 
 Loop 2 {  ; 拜拜
-    Sleep 200
-    姿势.同步姿势(15, 0, 0, 180, 0, 0)
-    Sleep 200
+    Sleep 150
+    姿势.同步姿势(15, 0, 8, 180, 0, 0)
+    Sleep 150
     姿势.同步姿势(15, 0, 30, 180, 0, 0)
 }
 Sleep 200
@@ -172,12 +172,14 @@ Class PlayerSDK {
 
     ; 断开Player连接
     __Delete() {
+        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
         DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
         DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
     }
 
-    ; 断开Player连接并清理占用【断开表情似乎有问题，其实也不需要断开表情】
+    ; 断开Player连接并清理占用
     断开连接() {
+        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
         DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
         DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
         DllCall("ElectronBotSDK-Player\AHK_Delete", "Ptr", this.pPlayer)

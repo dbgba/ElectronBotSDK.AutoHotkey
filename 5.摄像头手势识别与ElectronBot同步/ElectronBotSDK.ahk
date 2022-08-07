@@ -98,12 +98,14 @@ Class PlayerSDK {
 
     ; 断开Player连接
     __Delete() {
+        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
         DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
         DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
     }
 
-    ; 断开Player连接并清理占用【断开表情似乎有问题，其实也不需要断开表情】
+    ; 断开Player连接并清理占用
     断开连接() {
+        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
         DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
         DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
         DllCall("ElectronBotSDK-Player\AHK_Delete", "Ptr", this.pPlayer)
