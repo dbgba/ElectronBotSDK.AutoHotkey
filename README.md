@@ -19,16 +19,14 @@
 
 调用Accessible(无障碍)获取指定联系人的信息做为控制信号，即可实现比如：收到ElectronBot姿势参数后，调用SDK完成动作。
 
-![](https://gcore.jsdelivr.net/gh/dbgba/Projectimages@master/VisualGestureRecognition/%E4%B8%8B%E8%BD%BD%E4%BE%9D%E8%B5%96%E5%8C%85.jpg)
-　
-[演示截图.png]
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/1.%E9%80%9A%E8%BF%87%E5%BE%AE%E4%BF%A1%E6%9D%A5%E6%8E%A7%E5%88%B6ElectronBot/%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg)
 
 
-**2.智能家居控制**
+**2.对智能家居的控制**
 
 此示例选了一个简单易完成的方法硬改来实现电脑控制智能家居。示例用的继电器是CH340驱动，而AHK就能直接与CH340设备通信来进行控制。
 
-[3.将引出的线接到继电器.jpg]
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/2.%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85%E6%8E%A7%E5%88%B6/3.%E5%B0%86%E5%BC%95%E5%87%BA%E7%9A%84%E7%BA%BF%E6%8E%A5%E5%88%B0%E7%BB%A7%E7%94%B5%E5%99%A8.jpg)
 
 　
 
@@ -38,21 +36,22 @@
 
 　
 
-**4.多个ElectronBot远程Tcp网络互动**
+**4.多个ElectronBot远程Tcp网络互动，手机网页控制ElectronBot**
 
 此示例是简单的验证了一下AHK通过公网IP或者局域网远程同步两台ElectronBot的互动反应。也可以使用我另一个项目进行网页控制，用浏览器来操作ElectronBot的话，就能实现手机或电脑的远程控制。
 
 　
 
-**5.摄像头手势识别与ElectronBot同步**
+**5.摄像头手势识别与ElectronBot动作同步**
 
 此示例需要与我另一个手势识别项目配合来实现，示例预设演示同步动作有：双手放下时、单手举起握拳时、单手举起做剪刀手时、双手举起握拳时。摄像头识别到上述手势后，ElectronBot也会同步反应。当双手举起握拳时，会执行一套预设的长动作。
 
-[推荐手势设置.jpg]
+![](https://gcore.jsdelivr.net/gh/dbgba/ElectronBotSDK.AutoHotkey@master/5.%E6%91%84%E5%83%8F%E5%A4%B4%E6%89%8B%E5%8A%BF%E8%AF%86%E5%88%AB%E4%B8%8EElectronBot%E5%90%8C%E6%AD%A5/%E6%8E%A8%E8%8D%90%E6%89%8B%E5%8A%BF%E8%AE%BE%E7%BD%AE.jpg)
+
 
 　
 
-**6.语音唤醒并调用ElectronBot表情**
+**6.语音唤醒并调用ElectronBot表情等**
 
 此示例需要与我另一个手势识别项目中的语音识别来实现。因为调用的是Windows自带的API来实现的，不能保证所有系统都能复现。大致就是演示一种玩法，让ElectronBot可以变成你的语音助手。已经提供了SDK调用方法，用什么语音方案可自行选择。
 
@@ -70,7 +69,7 @@ ElectronBot在每次接入USB时都会以默认花屏显示，此辅助示例通
 
 　
 
-**如果有更多想法和玩法扩展可以加入这个上位机交流群：924558003，我也在群里可以一起讨论。**
+**如果有更多想法和玩法扩展可以加入这个上位机交流群：924558003，我也在这个群里，可以一起讨论。**
 
 　
 
