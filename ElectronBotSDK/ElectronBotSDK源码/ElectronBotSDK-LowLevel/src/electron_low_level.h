@@ -12,8 +12,7 @@ __declspec(dllexport) void AHK_Delete(void *electronLowLevel);
 __declspec(dllexport) bool AHK_Connect(void *electronLowLevel);
 __declspec(dllexport) bool AHK_Disconnect(void *electronLowLevel);
 __declspec(dllexport) bool AHK_Sync(void *electronLowLevel);
-__declspec(dllexport) void *Mat_New();
-__declspec(dllexport) void AHK_SetImageSrc_Mat(void *electronLowLevel, void *mat);
+__declspec(dllexport) void AHK_SetImageSrc_MatData(void *electronLowLevel, void* image_data);
 __declspec(dllexport) void AHK_SetImageSrc_Path(void *electronLowLevel, void *filepath);
 __declspec(dllexport) void AHK_SetExtraData(void *electronLowLevel, uint8_t* _data, uint32_t _len);
 __declspec(dllexport) uint8_t* AHK_GetExtraData(void *electronLowLevel, uint8_t* _data);
@@ -36,6 +35,7 @@ public:
     bool Sync();
     void SetImageSrc(const cv::Mat &_mat);
     void SetImageSrc(const std::string &_filePath);
+    void SetImageSrc_MatData(void* image_data);
     void SetExtraData(uint8_t* _data, uint32_t _len = 32);
     void SetJointAngles(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6,
                         bool _enable = false);

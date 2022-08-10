@@ -1,23 +1,12 @@
-﻿; 可以与其它常用热键修改一起进入开机启动，方便调试ElectronBot
+﻿; 可以与 "8.热键快速调试ElectronBot.ahk" 脚本进行合并，实现热拔插同步表情与连接
 #NoEnv
+#SingleInstance Force
+SetWorkingDir %A_ScriptDir%
 SetBatchLines -1
 
 OnMessage(0x219, "WM_DEVICECHANGE")  ; 注册USB设备监控事件
-拔出时数组 := JEE_DeviceList()
+拔出时数组 := JEE_DeviceList()  ; 初始化监控事件
 
-; 播放指定表情的示例代码
-新进程代码=
-(`%
-#NoTrayIcon
-SetWorkingDir %A_ScriptDir%
-DllCall("LoadLibrary", "Str", "ElectronBotSDK-Player.dll")  ; 加载SDK文件路径
-pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
-DllCall("ElectronBotSDK-Player\AHK_Connect", "Ptr", pPlayer, "char")
-DllCall("ElectronBotSDK-Player\AHK_Play", "Ptr", pPlayer, "astr", "video.mp4")  ; 播放指定表情路径
-DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", pPlayer, "char")
-)
-
-/*
 ; 初始表情图和初始姿势的代码示例
 新进程代码=
 (`%
@@ -32,6 +21,19 @@ DllCall("ElectronBotSDK-LowLevel\AHK_SetImageSrc_Path", "Ptr", pLowLevel, "astr"
 DllCall("ElectronBotSDK-LowLevel\AHK_Sync", "Ptr", pLowLevel, "char")  ; 同步上传
 DllCall("ElectronBotSDK-LowLevel\AHK_Disconnect", "Ptr", pLowLevel, "char")
 )
+
+/*
+; 播放指定表情的示例代码
+新进程代码=
+(`%
+#NoTrayIcon
+SetWorkingDir %A_ScriptDir%
+DllCall("LoadLibrary", "Str", "ElectronBotSDK-Player.dll")  ; 加载SDK文件路径
+pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
+DllCall("ElectronBotSDK-Player\AHK_Connect", "Ptr", pPlayer, "char")
+DllCall("ElectronBotSDK-Player\AHK_Play", "Ptr", pPlayer, "astr", "video.mp4")  ; 播放指定表情路径
+DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", pPlayer, "char")
+)
 */
 Return
 
@@ -43,7 +45,7 @@ WM_DEVICECHANGE(wParam, lParam, msg, hwnd) {
         Loop % 插入时数组.Length() {
             if (插入时数组[A_Index]!=拔出时数组[A_Index]) {
                 ; if (InStr(插入时数组[A_Index], "(COM8")!=0)  ; 此行为ElectronBot的COM端口为8时，同步表情【自行去注释使用】
-                    Exec(新进程代码)
+                    ElectronBot初始化(新进程代码)
                 Break
             }
         }
@@ -53,12 +55,17 @@ WM_DEVICECHANGE(wParam, lParam, msg, hwnd) {
 }
 
 ; 使用临时进程启动自定义脚本
-Exec(s) {
+ElectronBot初始化(s) {
+    if !A_Is64bitOS
+        MsgBox 0x30, 当前AHK解释器不是64位的！, 因为操作 ElectronBot 需要 64 位解释器，`n不是 64 位解释器将无法同步表情与姿势。
 	s:=s "`nExitApp"
-	, exec := ComObjCreate("WScript.Shell").Exec(A_AhkPath " /ErrorStdOut /f *")
+	, exec := ComObjCreate("WScript.Shell").Exec(A_AhkPath " /f *")
 	, exec.StdIn.Write(s)
 	, exec.StdIn.Close()
 }
+
+
+; ================== 以下是脚本所用的函数类库 ==================
 
 JEE_DeviceList() {
 	local

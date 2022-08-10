@@ -2,9 +2,9 @@
 Gosub SDK加载连接
 Loop 2 {
     姿势.同步姿势(15, 0, 30, 160, 0, 0)
-    Sleep 50
+    Sleep 100
     姿势.同步姿势(15, 0, 0, 160, 0, 0)
-    Sleep 50
+    Sleep 100
 }
 姿势.断开连接()
 ExitApp

@@ -1,22 +1,24 @@
 ﻿/*
   大致使用方法：
-  1. 退出其它上位机和驱动，确保此SDK能正常操作ElectronBot
+  1. 退出其它上位机，确保此SDK能正常操作ElectronBot
   2. 打开微信PC版和此脚本
   3. 按演示图所示，向自己或某人发送自定义命令。如此脚本写好的示例：姿势∶15,0,0,0,30,150
   4. 脚本间隔1秒会获取信息，并反馈到ElectronBot上
 
-  如果能右下角没有接收到微信信息，就是此脚本Acc无法获取的问题。
-  如果获取到正确的微信信息，但是ElectronBot没有同步反应。请尝试退出其它上位机和驱动，重新插拔ElectronBot再试一次
+  如果能右下角没有接收到微信信息，那就是此脚本Acc无法获取微信内容。
+  如果获取到正确的微信信息，但是ElectronBot没有同步反应。请尝试退出其它上位机，重新插拔ElectronBot再试一次
   按F3或者F4键可直接测试是否能驱动你的ElectronBot
 */
 
 ; 2022.8.3 - 适配当天微信PC版的最新版本：3.7.5.23版本【将微信窗口最小化可以后台接收】
 ; 理论上自己测试的微信3.4.5.27~3.7.5.23版都可以使用
 ; 更多用法需要Acc库来完成：https://www.autoahk.com/archives/38723
-#SingleInstance Force
 SetBatchLines -1
+#SingleInstance Force
+SetWorkingDir %A_ScriptDir%
 CoordMode ToolTip
 
+; LowLevelSDK 加载与连接
 Global 姿势 := New LowLevelSDK()
 
 Gosub F1  ; 直接跳到F1流程启动
@@ -44,7 +46,7 @@ F3::
 姿势.同步姿势(RegExReplace(分割成数组[1], "\D"), 分割成数组[2], 分割成数组[3], 分割成数组[4], 分割成数组[5],  分割成数组[6])
 Return
 
-; 按F4键为直接调试【如果按F3和F4键ElectronBot都没有反应，那得退出其它上位机和驱动，重新插拔ElectronBot再试一次】
+; 按F4键为直接调试
 F4::姿势.同步姿势(0,0,0,0,30,0)
 
 
@@ -73,6 +75,8 @@ if WinExist("ahk_id " IDHwnd) {
 } else
 	ToolTip
 Return
+
+; ================== 以下是脚本所用的函数类库 ==================
 
 ; ================== Acc获取简易函数 ==================
 AccGet(iHwnd, iPath) {  ; By xlivans , Thank Tebayaki 
@@ -110,35 +114,32 @@ AccChild(iAccObj, iPath) {
 Class LowLevelSDK {
     ; LowLevel 加载与连接
     __New(FilePath:="ElectronBotSDK-LowLevel.dll") {
+        ; 判断文件是否存在和适配中文路径加载
         if FileExist(FilePath) {
             if (InStr(FilePath, "\")=0) and (InStr(FilePath, "/")=0)
                 FilePath := A_ScriptDir "\" FilePath
-            SplitPath, FilePath, 文件名, 文件路径
-            DllCall("SetDllDirectory", "Str", 文件路径)  ; 重定向dll加载目录
-            DllCall("LoadLibrary", "Str", 文件名)
-            this.pLowLevel := DllCall("ElectronBotSDK-LowLevel\AHK_New", "Ptr")
-            DllCall("ElectronBotSDK-LowLevel\AHK_Connect", "Ptr", this.pLowLevel, "char")
+            SplitPath, FilePath, OutFileName, OutDir
+            DllCall("SetDllDirectory", "Str", OutDir)  ; 重定向dll加载目录
+            DllCall("LoadLibrary", "Str", OutFileName)
+            this.DLLFunc := OutFileName
+            this.pLowLevel := DllCall(this.DLLFunc "\AHK_New", "Ptr")
+            DllCall(this.DLLFunc "\AHK_Connect", "Ptr", this.pLowLevel, "char")
             DllCall("SetDllDirectory", "Str", A_ScriptDir)
         } else {
-            MsgBox 0x10, 没有发现SDK文件！, %FilePath% 文件不存在！`n`n请将此脚本转移到附带的SDK改版目录下，`n再次打开脚本进行调用。
+            MsgBox 0x10, 需加载的SDK文件不存在！, %FilePath% 文件不存在！`n`n请将此脚本转移到附带的SDK改版目录下，`n或者指定SDK的路径后，再次打开脚本进行调用。
             ExitApp
         }
     }
 
-    ; 断开LowLevel连接
-    __Delete() {
-        DllCall("ElectronBotSDK-LowLevel\AHK_Disconnect", "Ptr", this.pLowLevel, "char")
-    }
-
     ; LowLevel 连接
     连接() {
-        Return DllCall("ElectronBotSDK-LowLevel\AHK_Connect", "Ptr", this.pLowLevel, "char")
+        Return DllCall(this.DLLFunc "\AHK_Connect", "Ptr", this.pLowLevel, "char")
     }
 
     ; 断开LowLevel连接并清理占用
     断开连接() {
-        DllCall("ElectronBotSDK-LowLevel\AHK_Disconnect", "Ptr", this.pLowLevel, "char")
-        DllCall("ElectronBotSDK-LowLevel\AHK_Delete", "Ptr", this.pLowLevel)
+        DllCall(this.DLLFunc "\AHK_Disconnect", "Ptr", this.pLowLevel, "char")
+        DllCall(this.DLLFunc "\AHK_Delete", "Ptr", this.pLowLevel)
     }
 
     ; 函数定义与稚晖君的上位机顺序一致：
@@ -146,33 +147,50 @@ Class LowLevelSDK {
     ; 参1=-15~15、参2=-90~90、参3=-30~30、参4=-180~180、参5=-30~30、参6=-180~180。超过限定值则无效
     同步姿势(_j1, _j6, _j2, _j3, _j4, _j5, FilePath:="") {
         ; 原SDK对应：j1=头部、j2=左臂展开、j3=右臂抬起、j4=右臂展开、j5=左臂抬起、j6=身体转向
-        DllCall("ElectronBotSDK-LowLevel\AHK_SetJointAngles", "Ptr", this.pLowLevel, "Float", _j1, "Float", _j2, "Float", _j3, "Float", _j4, "Float", _j5, "Float", _j6, "int", True)
+        DllCall(this.DLLFunc "\AHK_SetJointAngles", "Ptr", this.pLowLevel, "Float", _j1, "Float", _j2, "Float", _j3, "Float", _j4, "Float", _j5, "Float", _j6, "int", True)
         ; 在外部用全局变量设置路径可以让每个动作都调用一张图片，比如：Global LLSDKFilePath := "test.jpg"
         , (LLSDKFilePath!="" && FilePath := LLSDKFilePath)
         if (FilePath!="")
             if FileExist(FilePath)
-                DllCall("ElectronBotSDK-LowLevel\AHK_SetImageSrc_Path", "Ptr", this.pLowLevel, "astr", FilePath)
-        Return DllCall("ElectronBotSDK-LowLevel\AHK_Sync", "Ptr", this.pLowLevel, "char")  ; 同步上传
+                DllCall(this.DLLFunc "\AHK_SetImageSrc_Path", "Ptr", this.pLowLevel, "astr", FilePath)
+        Return DllCall(this.DLLFunc "\AHK_Sync", "Ptr", this.pLowLevel, "char")  ; 同步上传
     }
 
     ; 仅设置不同步上传
     设置姿势(_j1, _j6, _j2, _j3, _j4, _j5, Enable:=True) {
-        DllCall("ElectronBotSDK-LowLevel\AHK_SetJointAngles", "Ptr", this.pLowLevel, "Float", _j1, "Float", _j2, "Float", _j3, "Float", _j4, "Float", _j5, "Float", _j6, "int", Enable)
+        DllCall(this.DLLFunc "\AHK_SetJointAngles", "Ptr", this.pLowLevel, "Float", _j1, "Float", _j2, "Float", _j3, "Float", _j4, "Float", _j5, "Float", _j6, "int", Enable)
+    }
+
+    ; 需要同步姿势后，才能获取关节角度。返回数组
+    获取关节角度() {
+        VarSetCapacity(_angles, 24)
+        DllCall(this.DLLFunc "\AHK_GetJointAngles", "Ptr", this.pLowLevel, "Ptr", &_angles)
+        Sleep 10  ; 需要获取两次得到当前数据
+        DllCall(this.DLLFunc "\AHK_GetJointAngles", "Ptr", this.pLowLevel, "Ptr", &_angles)
+
+        Return [ NumGet(_angles, 0, "float"), NumGet(_angles, 4, "float"), NumGet(_angles, 8, "float"), NumGet(_angles, 12, "float"), NumGet(_angles, 16, "float"), NumGet(_angles, 20, "float") ]
     }
 
     同步() {
-        Return DllCall("ElectronBotSDK-LowLevel\AHK_Sync", "Ptr", this.pLowLevel, "char")
+        Return DllCall(this.DLLFunc "\AHK_Sync", "Ptr", this.pLowLevel, "char")
     }
 
-    ; AHK_SetImageSrc_Mat 待测试后添加
     设置图像源路径(FilePath) {
-        DllCall("ElectronBotSDK-LowLevel\AHK_SetImageSrc_Path", "Ptr", this.pLowLevel, "astr", FilePath)
+        DllCall(this.DLLFunc "\AHK_SetImageSrc_Path", "Ptr", this.pLowLevel, "astr", FilePath)
     }
 
-    ; SetExtraData 与 GetExtraData  待测试后添加
-    ; GetJointAngles 与 SetJointAngles   待测试后添加
-}
+    设置图像Data(image_data) {
+        DllCall(this.DLLFunc "\AHK_SetImageSrc_MatData", "Ptr", this.pLowLevel, "Ptr", image_data)
+    }
 
+    设置额外数据(_data, _len) {  ; 没条件测试此项
+        DllCall(this.DLLFunc "\AHK_SetExtraData", "Ptr", this.pLowLevel, "Uint*", _data, "Uint", _len)
+    }
+
+    获取额外数据(_data) {  ; 没条件测试此项
+        Return DllCall(this.DLLFunc "\AHK_GetExtraData", "Ptr", this.pLowLevel, "Uint*", _data)
+    }
+}
 
 Class PlayerSDK {
     ; Player 加载与连接
@@ -180,52 +198,47 @@ Class PlayerSDK {
         if FileExist(FilePath) {
             if (InStr(FilePath, "\")=0) and (InStr(FilePath, "/")=0)
                 FilePath := A_ScriptDir "\" FilePath
-            SplitPath, FilePath, 文件名, 文件路径
-            DllCall("SetDllDirectory", "Str", 文件路径)  ; 重定向dll加载目录
-            DllCall("LoadLibrary", "Str", 文件名)
-            this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
-            DllCall("ElectronBotSDK-Player\AHK_Connect", "Ptr", this.pPlayer, "char")
+            SplitPath, FilePath, OutFileName, OutDir
+            DllCall("SetDllDirectory", "Str", OutDir)  ; 重定向dll加载目录
+            DllCall("LoadLibrary", "Str", OutFileName)
+            this.DLLFunc := OutFileName
+            this.pPlayer := DllCall(this.DLLFunc "\AHK_New", "Ptr")
+            DllCall(this.DLLFunc "\AHK_Connect", "Ptr", this.pPlayer, "char")
             DllCall("SetDllDirectory", "Str", A_ScriptDir)
         } else {
-            MsgBox 0x10, 没有发现SDK文件！, %FilePath% 文件不存在！`n`n请将此脚本转移到附带的SDK改版目录下，`n再次打开脚本进行调用。
+            MsgBox 0x10, 需加载的SDK文件不存在！, %FilePath% 文件不存在！`n`n请将此脚本转移到附带的SDK改版目录下，`n或者指定SDK的路径后，再次打开脚本进行调用。
             ExitApp
         }
     }
 
-    ; 断开Player连接
-    __Delete() {
-        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
-        DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
-        DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
-    }
-
     ; 断开Player连接并清理占用
     断开连接() {
-        this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
-        DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
-        DllCall("ElectronBotSDK-Player\AHK_Disconnect", "Ptr", this.pPlayer, "char")
-        DllCall("ElectronBotSDK-Player\AHK_Delete", "Ptr", this.pPlayer)
+        if this.ExpressionsPlayed {
+            DllCall(this.DLLFunc "\AHK_Disconnect", "Ptr", this.pPlayer, "char")
+            DllCall(this.DLLFunc "\AHK_Delete", "Ptr", this.pPlayer)
+        }
     }
 
     ; Player 连接
     连接() {
-        Return DllCall("ElectronBotSDK-Player\AHK_Connect", "Ptr", this.pPlayer, "char")
+        Return DllCall(this.DLLFunc "\AHK_Connect", "Ptr", this.pPlayer, "char")
     }
 
+    ; 需确保与上个动作有150毫秒延时，避免线程抢占卡死
     播放表情(FilePath) {
         if FileExist(FilePath) {
-            DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
-            this.pPlayer := DllCall("ElectronBotSDK-Player\AHK_New", "Ptr")
-            DllCall("ElectronBotSDK-Player\AHK_Connect", "Ptr", this.pPlayer, "char")
-            Return DllCall("ElectronBotSDK-Player\AHK_Play", "Ptr", this.pPlayer, "astr", FilePath)
+            DllCall(this.DLLFunc "\AHK_Stop", "Ptr", this.pPlayer)
+            this.pPlayer := DllCall(this.DLLFunc "\AHK_New", "Ptr")
+            this.ExpressionsPlayed := DllCall(this.DLLFunc "\AHK_Connect", "Ptr", this.pPlayer, "char")
+            Return DllCall(this.DLLFunc "\AHK_Play", "Ptr", this.pPlayer, "astr", FilePath)
         }
     }
 
     停止表情() {
-        DllCall("ElectronBotSDK-Player\AHK_Stop", "Ptr", this.pPlayer)
+        DllCall(this.DLLFunc "\AHK_Stop", "Ptr", this.pPlayer)
     }
 
     设置播放速度(ratio) {
-        DllCall("ElectronBotSDK-Player\AHK_SetPlaySpeed", "Ptr", this.pPlayer, "Float", ratio)
+        DllCall(this.DLLFunc "\AHK_SetPlaySpeed", "Ptr", this.pPlayer, "Float", ratio)
     }
 }

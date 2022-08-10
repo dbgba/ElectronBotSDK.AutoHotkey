@@ -1,9 +1,10 @@
 ﻿/*
-以下我以小米无线开关为例，使用继电器实现变相控制智能家居。
+以下以小米无线开关为例，使用继电器实现变相控制智能家居。
 其实也可以用Arduino+MOS管来实现，单击、双击、长按这些操作。
 如果YKUS-1继电器设置无误的话，运行此脚本会得到继电器长按1.3秒的反应
 */
 SetBatchLines -1
+#SingleInstance Force
 
 RS232_Port   := "COM1"  ; 这里改成你继电器对应的COM号
 RS232_Baud  := 9600
@@ -23,7 +24,7 @@ RS232_Write(RS232_FileHandle, "0xA0,0x01,0x02,0xA3")  ; 抬起
 Return
 
 /*
-; 执行继电器双击操作示例代码【单击就是一次按下、延时100毫秒后抬起】
+; 执行继电器双击操作示例代码
 RS232_Write(RS232_FileHandle, "0xA0,0x01,0x03,0xA4")  ; 按下
 Sleep 100
 RS232_Write(RS232_FileHandle, "0xA0,0x01,0x02,0xA3")  ; 抬起
@@ -36,6 +37,7 @@ RS232_Write(RS232_FileHandle, "0xA0,0x01,0x02,0xA3")  ; 抬起
 Return
 */
 
+; ================== 以下是脚本所用的函数类库 ==================
 
 ;###### Initialize RS232 COM Subroutine #################################
 RS232_Initialize(RS232_Settings) {

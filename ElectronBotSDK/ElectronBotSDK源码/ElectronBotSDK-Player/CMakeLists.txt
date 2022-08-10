@@ -27,7 +27,7 @@ add_library(${PROJECT_NAME} SHARED
 
 target_link_libraries(${PROJECT_NAME}
         ElectronBotSDK-LowLevel
-        opencv_world348d.lib
+        opencv_world455.lib
         )
 
 add_executable(Sample
@@ -36,5 +36,5 @@ add_executable(Sample
 
 target_link_libraries(Sample
         ${PROJECT_NAME}
-        opencv_world348d.lib
+        opencv_world455.lib
         )

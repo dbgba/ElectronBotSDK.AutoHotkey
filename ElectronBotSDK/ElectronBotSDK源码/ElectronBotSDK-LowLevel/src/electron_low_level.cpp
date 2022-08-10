@@ -1,6 +1,8 @@
 #include "electron_low_level.h"
 #include "USBInterface.h"
+#include "opencv2/imgproc/types_c.h"
 
+//改用opencv_world455.dll发布版本做依赖，使用 Release - x64 编译
 void *AHK_New(){
     return new ElectronLowLevel();
 }
@@ -21,19 +23,16 @@ bool AHK_Sync(void *electronLowLevel){
     return static_cast<ElectronLowLevel *>(electronLowLevel)->Sync();
 }
 
-//void ElectronLowLevel::SetImageSrc(const cv::Mat &_mat)
-void *Mat_New(){
-    return new cv::Mat();
-}
-
-void AHK_SetImageSrc_Mat(void *electronLowLevel, void *mat){
-    static_cast<ElectronLowLevel *>(electronLowLevel)->SetImageSrc(*static_cast<cv::Mat *>(mat));
+//void ElectronLowLevel::SetImageSrc(const cv::Mat &_mat) 方便适配AHK，新增了一个修改函数
+void AHK_SetImageSrc_MatData(void *electronLowLevel, void* image_data){
+    static_cast<ElectronLowLevel *>(electronLowLevel)->SetImageSrc_MatData(image_data);
 }
 
 //void ElectronLowLevel::SetImageSrc(const string &_filePath)
 void AHK_SetImageSrc_Path(void *electronLowLevel, void *filepath){
     static_cast<ElectronLowLevel *>(electronLowLevel)->SetImageSrc(string((char*)filepath));
 }
+
 //void ElectronLowLevel::SetExtraData(uint8_t* _data, uint32_t _len)
 void AHK_SetExtraData(void *electronLowLevel, uint8_t* _data, uint32_t _len){
     static_cast<ElectronLowLevel *>(electronLowLevel)->SetExtraData(_data, _len);
@@ -52,6 +51,12 @@ void AHK_GetJointAngles(void *electronLowLevel, float* _jointAngles){
 //void ElectronLowLevel::SetJointAngles(float _j1, float _j2, float _j3, float _j4, float _j5, float _j6, bool _enable)
 void AHK_SetJointAngles(void *electronLowLevel, float _j1, float _j2, float _j3, float _j4, float _j5, float _j6, bool _enable){
     static_cast<ElectronLowLevel *>(electronLowLevel)->SetJointAngles(_j1, _j2, _j3, _j4, _j5, _j6, _enable);
+}
+
+//新增函数只接收已裁剪并转换好颜色的MatData
+void ElectronLowLevel::SetImageSrc_MatData(void* image_data)
+{
+    std::memcpy(frameBufferTx[pingPongWriteIndex], image_data, 240 * 240 * 3);
 }
 
 

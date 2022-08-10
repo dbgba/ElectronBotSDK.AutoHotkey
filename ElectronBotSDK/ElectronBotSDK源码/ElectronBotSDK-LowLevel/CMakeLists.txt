@@ -31,10 +31,10 @@ add_executable(Sample
 
 target_link_libraries(${PROJECT_NAME}
         USBInterface
-        opencv_world348d.lib
+        opencv_world455.lib
         )
 
 target_link_libraries(Sample
         ${PROJECT_NAME}
-        opencv_world348d.lib
+        opencv_world455.lib
         )

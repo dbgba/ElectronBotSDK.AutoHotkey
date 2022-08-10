@@ -1,6 +1,7 @@
 #include "electron_player.h"
 #include <opencv2/opencv.hpp>
 
+//改用opencv_world455.dll发布版本做依赖，使用 Release - x64 编译
 void *AHK_New(){
     return new ElectronPlayer();
 }
@@ -115,14 +116,16 @@ void ElectronPlayer::PlayTask(ElectronPlayer* _obj, const std::string &_filePath
     cv::VideoCapture video(_filePath);
     cv::Mat frame;
 
-    auto totalFrameCount = video.get(CV_CAP_PROP_FRAME_COUNT);
+    //CAP_PROP_FRAME_COUNT = 7
+    auto totalFrameCount = video.get(7);
     long index = 1;
 
     while (_obj->isPlaying && index < totalFrameCount)
     {
         video >> frame;
         index += (long) _speedRatio;
-        video.set(CV_CAP_PROP_POS_FRAMES, index);
+        //CAP_PROP_POS_FRAMES = 1
+        video.set(1, index);
 
         _obj->lowLevelHandle->SetImageSrc(frame);
         _obj->lowLevelHandle->Sync();
