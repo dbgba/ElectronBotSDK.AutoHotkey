@@ -8,7 +8,7 @@
 * 虽然AHK可以将解释器与.ahk脚本设为同名，免安装使用。但是为了方便调试使用，但是建议到[AutoHotkey](https://www.autohotkey.com/download/ahk-install.exe)官网下载安装一下【建议使用默认选项安装】。毕竟安装包就3MB大小，能避免不必要的麻烦。
 
 * 安装好[AutoHotkey](https://www.autohotkey.com/download/ahk-install.exe)后，就可以对.ahk文件右键选**Edit Script**来编辑脚本了。项目所有示例中我只保留适配与ElectronBot相关的代码，而实际使用中我们可以使用AHK自身对电脑状态的判断和调用来实现很多的功能。
-* 例如：判断时间来设置电脑音量、当ElectronBot做姿势后，同时播报自定义语音、判断进程状态，决定开关某程序等等。需要根据自身情况查看[AHK中文帮助文档](https://www.autoahk.com/help/autohotkey/zh-cn/docs/commands/WinActive.htm)或使用对应函数类库做具体实现。
+* 例如：判断时间来设置电脑音量、当ElectronBot做姿势后，同时播报自定义语音、判断进程状态，决定开关某程序等等。需要根据自身情况查看[AHK中文帮助文档](https://wyagd001.github.io/zh-cn/docs/Tutorial.htm)或使用对应函数类库做具体实现。
 
 
 # 项目文件简要说明
